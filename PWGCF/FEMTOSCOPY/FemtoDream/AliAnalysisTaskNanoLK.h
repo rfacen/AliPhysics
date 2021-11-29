@@ -29,44 +29,47 @@ class AliAnalysisTaskNanoLK : public AliAnalysisTaskSE {
   void ResetGlobalTrackReference();
   void StoreGlobalTrackReference(AliVTrack *track);
 
-  void SetRunTaskLightWeight(bool light) {
+  void SetRunTaskLightWeight(bool light) { //for output histograms. Better to be . For fast runs 
     fisLightWeight = light;
   }
 
-  void SetEventCuts(AliFemtoDreamEventCuts* evtCuts) {
+  void SetEventCuts(AliFemtoDreamEventCuts* evtCuts) { //cuts for our analysis
     fEventCuts = evtCuts;
   }
 
-  void SetPosKaonCuts(AliFemtoDreamTrackCuts *trkCuts) {
+  void SetPosKaonCuts(AliFemtoDreamTrackCuts *trkCuts) { //kaon (particle)
     fPosKaonCuts = trkCuts;
   }
 
-  void SetNegKaonCuts(AliFemtoDreamTrackCuts *trkCuts) {
+  void SetNegKaonCuts(AliFemtoDreamTrackCuts *trkCuts) { //kaon (antiparticle)
     fNegKaonCuts = trkCuts;
   }
 
-  void Setv0Cuts(AliFemtoDreamv0Cuts* v0Cuts) {
+  void Setv0Cuts(AliFemtoDreamv0Cuts* v0Cuts) { //lambda
     fLambdaCuts = v0Cuts;
   }
-  void SetAntiv0Cuts(AliFemtoDreamv0Cuts* v0Cuts) {
+  void SetAntiv0Cuts(AliFemtoDreamv0Cuts* v0Cuts) { //antilambda
     fAntiLambdaCuts = v0Cuts;
   }
 
-  void SetCorrelationConfig(AliFemtoDreamCollConfig* config) {
+  void SetCorrelationConfig(AliFemtoDreamCollConfig* config) { //set output correlation. See "AliFemtoDreamCollConfig"
     fConfig=config;
   }
 
- private:
-  AliAnalysisTaskNanoLK(const AliAnalysisTaskNanoLK &task);
+ private: //private members, used for cxx file
+  AliAnalysisTaskNanoLK(const AliAnalysisTaskNanoLK &task); //first two rows are standard definition. Correspondence between the names. When you modify the code, AliAnalysisTaskNanoLK must be modified everywhere
   AliAnalysisTaskNanoLK &operator=(const AliAnalysisTaskNanoLK &task);
-  bool fisLightWeight;//
-  bool fIsMC;        //
-  TList *fQA;        //!
+ //we now define every variables, the ones we talked about in the void classes. Everything will be used on the cxx file
+ 
+  bool fisLightWeight;// //boolean for the histograms
+  bool fIsMC;        //  //switch the MonteCarlo on or off
+ 
+  TList *fQA;        //!  //Tlist is a folder on the root file, where you can store QA histograms (QA == quality assurance: check histograms, further information) 
   AliFemtoDreamEvent* fEvent;//!
   AliFemtoDreamEventCuts* fEventCuts;//
   TList* fEvtList;//!
-  AliFemtoDreamTrack* fTrack;//!
-  AliFemtoDreamTrackCuts* fPosKaonCuts;//
+  AliFemtoDreamTrack* fTrack;//!   //define track object
+  AliFemtoDreamTrackCuts* fPosKaonCuts;//  //correspective track cut
   TList* fPosKaonList;//!
   TList* fPosKaonMCList;//!
   AliFemtoDreamTrackCuts* fNegKaonCuts;//
@@ -79,7 +82,7 @@ class AliAnalysisTaskNanoLK : public AliAnalysisTaskSE {
   AliFemtoDreamv0Cuts* fAntiLambdaCuts;//
   TList* fAntiLambdaList;//!
   TList* fAntiLambdaMCList;//!
-  AliFemtoDreamCollConfig *fConfig; //
+  AliFemtoDreamCollConfig *fConfig; //      //from here to row 86, we have specific objects for the correlation
   AliFemtoDreamPairCleaner *fPairCleaner;   //!
   AliFemtoDreamPartCollection *fPartColl;   //!
   TList *fResults;//!
@@ -87,9 +90,11 @@ class AliAnalysisTaskNanoLK : public AliAnalysisTaskSE {
   AliFemtoDreamControlSample *fSample;   //!
   TList *fResultsSample;//!
   TList *fResultsSampleQA;//!
-  int fTrackBufferSize;//
+  int fTrackBufferSize;//    //vector to fill with particles to create pairs
   AliVTrack **fGTI;  //!
-  ClassDef(AliAnalysisTaskNanoLK,4)
+  ClassDef(AliAnalysisTaskNanoLK,4)   //important for the root streamer. Everytime we add a new member, we should increment the number (now it s 4)
+   
+   //rows with ! will not be "streamed" (e.g. neither copied nor stored): streamed: cuts, things for correlation, and the buffer
 };
 
 #endif /* PWGCF_FEMTOSCOPY_FEMTODREAM_ALIANALYSISTASKNANOLK_H_ */
